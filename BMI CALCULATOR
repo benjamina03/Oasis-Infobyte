@@ -1,0 +1,23 @@
+def cal_bmi (weight, height):
+    bmi = weight / (height * height)
+    return bmi
+
+def categorize_bmi(bmi):
+    if bmi < 18.4:
+        return "UNDERWEIGHT"
+    elif 18.5 <= bmi <= 24.9: 
+        return "NORMAL"
+    elif 25.0 <= bmi <= 29.9: 
+        return "OVERWEIGHT" 
+    else:
+        return "OBESE" 
+
+
+weight = float(input("Enter your weight (kg):"))
+height = float(input("Enter your height (m) "))
+
+bmi = cal_bmi (weight, height)
+category = categorize_bmi(bmi)
+
+print(f"Your BMI is:",round(bmi,2))
+print(f"The category you fall under is:{category}")

@@ -1,0 +1,61 @@
+import speech_recognition as sr
+import pyttsx3
+import datetime
+import webbrowser
+
+
+recognizer = sr.Recognizer()
+machine = pyttsx3.init()
+
+
+def speak(text):
+    machine.say(text)
+    machine.runAndWait()
+
+def get_audio(audio):
+    if "hello" in audio:
+        speak("Hello! How can I assist you today?")
+    elif "time" in audio:
+        current_time = datetime.datetime.now().strftime("%H:%M")
+        speak(f"The current time is {current_time}")
+    elif "date" in audio:
+        current_date = datetime.date.today().strftime("%B %d, %Y")
+        speak(f"The date is {current_date}")
+    elif "search" in audio:
+        search_query = audio.replace("search", "")
+        webbrowser.open_new_tab(f"https://www.google.com/search?q={search_query}")
+        speak(f"Here are the search results for {search_query}")
+    elif "exit" in audio:
+        speak("Well, thats a wrap! Goodbye!")
+        exit()
+    else:
+        speak("I am so sorry, I cannot perform such a task.")
+
+
+def listenVoice():
+    with sr.Microphone() as source:
+        print("I am Listening...")
+        recognizer.pause_threshold = 1
+        audio = recognizer.listen(source)
+
+        try:
+            print("Processing...")
+            query = recognizer.recognize_google(audio, language='en')
+            print(f"User: {query}")
+            return query.lower()
+        except sr.UnknownValueError:
+            print("Sorry, I couldn't understand you.")
+            return ""
+        except sr.RequestError:
+            print("Sorry, I'm currently unavailable. Please try again later.")
+            return ""
+
+
+
+speak("Hello! I am your personal voice assistant. How can I assist you today?")
+print("Hello! I am your personal voice assistant. How can I assist you today?")
+while True:
+    command = listenVoice()
+    get_audio(command)
+
+

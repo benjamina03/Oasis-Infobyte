@@ -18,7 +18,7 @@ from tkinter import ttk, filedialog, messagebox, scrolledtext
 import pandas as pd
 import numpy as np
 import os
-from datetime import datetime
+import tempfile
 
 # Import the core analyzer module
 from analyzer import TransactionAnalyzer
@@ -330,8 +330,8 @@ class FraudDetectionApp:
             'newbalanceDest': np.random.uniform(0, 100000, n_samples),
         })
         
-        # Save to temp file
-        sample_filepath = "/tmp/sample_mobile_money_data.csv"
+        # Save to temp file using cross-platform temp directory
+        sample_filepath = os.path.join(tempfile.gettempdir(), "sample_mobile_money_data.csv")
         sample_data.to_csv(sample_filepath, index=False)
         
         # Load the sample dataset
@@ -407,9 +407,12 @@ class FraudDetectionApp:
         if flagged is not None and len(flagged) > 0:
             for idx, row in flagged.iterrows():
                 score = row.get('anomaly_score', 'N/A')
-                # Create a summary of the transaction details
-                details = f"Type: {row.get('type', 'N/A')}, Amount: {row.get('amount', 'N/A'):.2f}"
-                self.flagged_tree.insert('', tk.END, values=(idx, f"{score:.4f}", details))
+                # Create a summary of the transaction details with safe formatting
+                amount = row.get('amount', 'N/A')
+                amount_str = f"{amount:.2f}" if isinstance(amount, (int, float)) else str(amount)
+                details = f"Type: {row.get('type', 'N/A')}, Amount: {amount_str}"
+                score_str = f"{score:.4f}" if isinstance(score, (int, float)) else str(score)
+                self.flagged_tree.insert('', tk.END, values=(idx, score_str, details))
         else:
             messagebox.showinfo("Info", "No flagged transactions found. Please run analysis first.")
             

@@ -5,6 +5,7 @@ Tests the core functionality without GUI.
 
 import sys
 import os
+import tempfile
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import pandas as pd
@@ -55,9 +56,9 @@ def test_analyzer():
     analyzer = TransactionAnalyzer()
     print("\n✓ Analyzer initialized successfully")
     
-    # Generate and save test data
+    # Generate and save test data using cross-platform temp directory
     test_data = generate_test_dataset()
-    test_filepath = "/tmp/test_transactions.csv"
+    test_filepath = os.path.join(tempfile.gettempdir(), "test_transactions.csv")
     test_data.to_csv(test_filepath, index=False)
     print(f"✓ Test dataset generated: {len(test_data)} transactions")
     
